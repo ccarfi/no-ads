@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World with Unlock Protocol</title>
+  <script src="https://cdn.unlock-protocol.com/unlock.latest.min.js"></script>
+  <style>
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hello world.</h1>
+  <p>This sentence is always shown.</p>
+  <div id="adUnit">
+    <p>This is an ad unit.</p>
+  </div>
+
+  <script>
+    const lockAddress = '0x25ecd5f097a516351841eda2ad964fb3e559b58a';
+    let noshow;
+
+    async function checkMembershipStatus() {
+      const unlockProtocolConfig = {
+        locks: {
+          [lockAddress]: {},
+        },
+        icon: true,
+      };
+
+      window.unlockProtocolConfig = unlockProtocolConfig;
+      const unlock = new UnlockProtocol(window.unlockProtocolConfig);
+
+      const hasValidKey = await unlock.getUserKeys(lockAddress);
+
+      return hasValidKey;
+    }
+
+    async function handleAdUnitVisibility() {
+      const adUnitDiv = document.getElementById('adUnit');
+      const hasMembership = await checkMembershipStatus();
+
+      noshow = hasMembership;
+
+      if (noshow) {
+        adUnitDiv.classList.add('hidden');
+      } else {
+        adUnitDiv.classList.remove('hidden');
+      }
+    }
+
+    handleAdUnitVisibility();
+  </script>
+</body>
+</html>
